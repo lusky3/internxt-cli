@@ -4,10 +4,11 @@ on:
   push:
     branches:
       - main
-    # Only build the image when Dockerfile is updated
     paths:
       - Dockerfile
       - entrypoint.sh
+  
+  workflow_dispatch:
 
 jobs:
   build-and-push-images:

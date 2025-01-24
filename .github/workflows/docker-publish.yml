@@ -2,7 +2,7 @@ name: Check for new internxt-cli release and build Docker image
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '0 * * * *'
 
 jobs:
   check-new-release:
@@ -28,6 +28,7 @@ jobs:
             echo $latest_release > .last_release
             git config user.name "github-actions"
             git config user.email "github-actions@github.com"
+            git pull --rebase
             git add .last_release
             git commit -m "Update latest release to $latest_release"
             git push
