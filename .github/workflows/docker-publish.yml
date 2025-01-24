@@ -1,0 +1,56 @@
+name: Check for new internxt-cli release and build Docker image
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+
+jobs:
+  check-new-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check and save latest release
+        id: check_save_release
+        run: |
+          latest_release=$(curl -s https://api.github.com/repos/internxt/cli/releases/latest | jq -r .tag_name)
+          echo "Latest release tag is $latest_release"
+          
+          last_known_release=$(cat .last_release 2>/dev/null || echo "")
+          echo "Last known release is $last_known_release"
+          
+          if [ "$latest_release" != "$last_known_release" ]; then
+            echo "New release detected: $latest_release"
+            echo "latest_release=$latest_release" >> $GITHUB_ENV
+
+            echo $latest_release > .last_release
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+            git add .last_release
+            git commit -m "Update latest release to $latest_release"
+            git push
+          else
+            echo "No new release found."
+            exit 0
+          fi
+
+      - name: Log in to GitHub Container Registry
+        if: env.latest_release
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push new Docker image
+        if: env.latest_release
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/internxt-cli:${{ env.latest_release }}
+            ghcr.io/${{ github.repository }}/internxt-cli:latest
+          platforms: linux/amd64
