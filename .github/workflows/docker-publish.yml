@@ -17,15 +17,31 @@ jobs:
         run: |
           latest_release=$(curl -s https://api.github.com/repos/internxt/cli/releases/latest | jq -r .tag_name)
           
-          if [ -z $latest_release ]; then
-            echo "Version lookup failed. Will try again in a moment..."
-            sleep 30
-            latest_release=$(curl -s https://api.github.com/repos/internxt/cli/releases/latest | jq -r .tag_name)
-            if [ -z $latest_release ]; then
-              echo "Version lookup failed a 2nd time. This could indicate an issue. Please investigate."
+          max_retries=5
+          retry_count=0
+
+          while [[ $retry_count -lt $max_retries ]]; do
+              # Fetch the latest release
+              latest_release=$(curl -s https://api.github.com/repos/internxt/cli/releases/latest | jq -r .tag_name)
+
+              if [[ -z "$latest_release" || "$latest_release" == "null" ]]; then
+                  echo "Version lookup failed. Retrying in 30 seconds... (Attempt $((retry_count + 1)) of $max_retries)"
+                  sleep 30
+                  ((retry_count++))
+              else
+                  # Valid release found, break the loop
+                  echo "Latest release version: $latest_release"
+                  break
+              fi
+          done
+
+          # Exit with error if retries are exhausted
+          if [[ $retry_count -eq $max_retries ]]; then
+              echo "Version lookup failed after $max_retries attempts. Please investigate."
               exit 1
-            fi
           fi
+
+          echo "latest_release=$latest_release" >> $GITHUB_ENV
           echo "Latest release tag is: $latest_release" 
           
           last_known_release=$(cat .last_release 2>/dev/null || echo "")
@@ -35,10 +51,10 @@ jobs:
             echo "New release detected."
             echo "latest_release=$latest_release" >> $GITHUB_ENV
 
-            echo $latest_release > .last_release
             git config user.name "github-actions"
             git config user.email "github-actions@github.com"
             git pull --rebase
+            echo $latest_release > .last_release
             git add .last_release
             git commit -m "Update latest release to $latest_release"
             git push
