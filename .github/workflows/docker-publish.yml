@@ -42,14 +42,13 @@ jobs:
           fi
 
           echo "latest_release=$latest_release" >> $GITHUB_ENV
-          echo "Latest release tag is: $latest_release" 
           
           last_known_release=$(cat .last_release 2>/dev/null || echo "")
           echo "Our version is: $last_known_release"
           
           if [ "$latest_release" != "$last_known_release" ]; then
             echo "New release detected."
-            echo "latest_release=$latest_release" >> $GITHUB_ENV
+            echo "new_release=true" >> $GITHUB_ENV
 
             git config user.name "github-actions"
             git config user.email "github-actions@github.com"
@@ -60,11 +59,12 @@ jobs:
             git push
           else
             echo "No new release found."
+            echo "new_release=false" >> $GITHUB_ENV
             exit 0
           fi
 
       - name: Log in to GitHub Container Registry
-        if: env.latest_release
+        if: env.new_release == 'true'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -72,7 +72,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push new Docker image
-        if: env.latest_release
+        if: env.new_release == 'true'
         uses: docker/build-push-action@v5
         with:
           context: .
