@@ -27,7 +27,7 @@ jobs:
               if [[ -z "$latest_release" || "$latest_release" == "null" ]]; then
                   echo "Version lookup failed. Retrying in 30 seconds... (Attempt $((retry_count + 1)) of $max_retries)"
                   sleep 30
-                  ((retry_count++))
+                  retry_count=$((retry_count + 1))
               else
                   # Valid release found, break the loop
                   echo "Latest release version: $latest_release"
