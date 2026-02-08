@@ -11,6 +11,9 @@ on:
     workflows: ["Check for new internxt-cli release and build Docker image"]
     types: [completed]
 
+permissions:
+  contents: read
+
 jobs:
   notify:
     runs-on: ubuntu-latest
