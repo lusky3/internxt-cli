@@ -5,6 +5,11 @@ on:
     - cron: '0 * * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  packages: write
+  security-events: write
+
 jobs:
   check-new-release:
     runs-on: ubuntu-latest
@@ -92,7 +97,7 @@ jobs:
 
       - name: Run Trivy vulnerability scanner
         if: env.new_release == 'true'
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.30.0
         with:
           image-ref: ghcr.io/${{ github.repository }}/internxt-cli:${{ env.latest_release }}
           format: 'sarif'
