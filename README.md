@@ -8,7 +8,10 @@ Docker container for running [Internxt CLI](https://github.com/internxt/cli) wit
 - TOTP (2FA) support
 - WebDAV server for mounting Internxt Drive
 - Automatic version tracking and updates via GitHub Actions
-- Lightweight Alpine-based image
+- Multi-platform support (amd64, arm64)
+- Security scanning with Trivy
+- Runs as non-root user
+- Health checks included
 
 ## Quick Start
 
@@ -45,6 +48,29 @@ services:
     restart: unless-stopped
 ```
 
+### Using Docker Secrets (Recommended)
+
+```yaml
+services:
+  internxt:
+    image: ghcr.io/yourusername/internxt-cli:latest
+    environment:
+      INTERNXT_EMAIL_FILE: /run/secrets/internxt_email
+      INTERNXT_PASSWORD_FILE: /run/secrets/internxt_password
+    secrets:
+      - internxt_email
+      - internxt_password
+    ports:
+      - "3005:3005"
+    restart: unless-stopped
+
+secrets:
+  internxt_email:
+    file: ./secrets/email.txt
+  internxt_password:
+    file: ./secrets/password.txt
+```
+
 ### Mounting WebDAV
 
 Once running, you can mount the WebDAV server:
@@ -59,12 +85,21 @@ mount -t davfs http://localhost:3005 /mnt/internxt
 Map Network Drive → http://localhost:3005
 ```
 
+## Security
+
+- Container runs as non-root user (UID 1000)
+- See [SECURITY.md](SECURITY.md) for security considerations
+- Use Docker secrets for credentials in production
+- Consider using HTTPS reverse proxy
+
 ## Automatic Updates
 
 This repository includes a GitHub Actions workflow that:
 - Checks hourly for new Internxt CLI releases
 - Automatically builds and publishes updated Docker images
 - Tags images with both version number and `latest`
+- Scans images for vulnerabilities with Trivy
+- Supports multiple architectures (amd64, arm64)
 
 ## Building Locally
 
@@ -74,4 +109,7 @@ docker build -t internxt-cli .
 
 ## License
 
-This Docker wrapper is provided as-is. Internxt CLI is subject to its own license terms.
+MIT License - see [LICENSE](LICENSE) file for details.
+
+Internxt CLI is subject to its own license terms.
+

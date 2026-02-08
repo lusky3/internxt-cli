@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.19
 
 WORKDIR /app
 
@@ -7,17 +7,22 @@ RUN apk add --update --no-cache \
     ca-certificates \
     openssl \
     nodejs \
-    npm
+    npm \
+    bash && \
+    addgroup -g 1000 internxt && \
+    adduser -D -u 1000 -G internxt internxt
 
-RUN npm install -g @internxt/cli hotp-totp-cli
-
-ENV INTERNXT_EMAIL=""
-ENV INTERNXT_PASSWORD=""
-ENV INTERNXT_TOTP=""
+RUN npm install -g @internxt/cli@1.6.2 hotp-totp-cli@1.0.3
 
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /entrypoint.sh && \
+    chown internxt:internxt /entrypoint.sh
+
+USER internxt
 
 EXPOSE 3005
+
+HEALTHCHECK --interval=60s --timeout=10s --start-period=30s --retries=3 \
+    CMD internxt webdav status || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]

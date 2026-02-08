@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+trap 'echo "Shutting down..."; exit 0' SIGTERM SIGINT
+
 if [ -z "$INTERNXT_EMAIL" ] || [ -z "$INTERNXT_PASSWORD" ]; then
   echo "Error: INTERNXT_EMAIL and INTERNXT_PASSWORD must be set."
   exit 1
@@ -16,13 +18,23 @@ else
   internxt login --email="$INTERNXT_EMAIL" --password="$INTERNXT_PASSWORD" --non-interactive
 fi
 
-echo "Enabling WebDAV..."
-internxt webdav-config --http
-internxt webdav enable
+if ! internxt webdav-config --http; then
+  echo "Error: Failed to configure WebDAV"
+  exit 1
+fi
 
-echo "Starting WebDAV status monitoring..."
+if ! internxt webdav enable; then
+  echo "Error: Failed to enable WebDAV"
+  exit 1
+fi
+
+echo "WebDAV enabled successfully"
+
 while true; do
   internxt --version
-  internxt webdav status
-  sleep 300
+  if ! internxt webdav status; then
+    echo "Warning: WebDAV status check failed"
+  fi
+  sleep 300 &
+  wait $!
 done
