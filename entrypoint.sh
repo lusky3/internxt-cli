@@ -10,7 +10,7 @@ fi
 
 if [ -n "$INTERNXT_TOTP" ]; then
   echo "Generating TOTP..."
-  TOTP=$(totp "$INTERNXT_TOTP")
+  TOTP=$(node -e "const { TOTP } = require('otpauth'); const totp = new TOTP({ secret: '$INTERNXT_TOTP' }); console.log(totp.generate());")
   echo "Logging into Internxt..."
   internxt login --email="$INTERNXT_EMAIL" --password="$INTERNXT_PASSWORD" --twofactor="$TOTP" --non-interactive
 else

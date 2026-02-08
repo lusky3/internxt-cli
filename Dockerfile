@@ -12,7 +12,7 @@ RUN apk add --update --no-cache \
     addgroup -g 1000 internxt && \
     adduser -D -u 1000 -G internxt internxt
 
-RUN npm install -g @internxt/cli@1.6.2 hotp-totp-cli@1.0.0
+RUN npm install -g @internxt/cli@1.6.2 otpauth@9.5.0
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh && \
