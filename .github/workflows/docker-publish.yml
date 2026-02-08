@@ -82,6 +82,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Log in to Docker Hub
+        if: env.new_release == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_KEY }}
+
       - name: Build and push new Docker image
         if: env.new_release == 'true'
         uses: docker/build-push-action@v6
@@ -91,6 +98,8 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}/internxt-cli:${{ env.latest_release }}
             ghcr.io/${{ github.repository }}/internxt-cli:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/internxt-cli:${{ env.latest_release }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/internxt-cli:latest
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max

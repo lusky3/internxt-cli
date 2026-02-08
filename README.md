@@ -16,11 +16,19 @@ Docker container for running [Internxt CLI](https://github.com/internxt/cli) wit
 ## Quick Start
 
 ```bash
+# From GitHub Container Registry
 docker run -d \
   -e INTERNXT_EMAIL="your@email.com" \
   -e INTERNXT_PASSWORD="yourpassword" \
   -p 3005:3005 \
-  ghcr.io/yourusername/internxt-cli:latest
+  ghcr.io/lusky3/internxt-cli:latest
+
+# From Docker Hub
+docker run -d \
+  -e INTERNXT_EMAIL="your@email.com" \
+  -e INTERNXT_PASSWORD="yourpassword" \
+  -p 3005:3005 \
+  yourusername/internxt-cli:latest
 ```
 
 ## Environment Variables
