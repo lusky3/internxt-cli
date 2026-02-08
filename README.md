@@ -66,8 +66,6 @@ This repository includes a GitHub Actions workflow that:
 - Automatically builds and publishes updated Docker images
 - Tags images with both version number and `latest`
 
-Current version: `v1.6.2`
-
 ## Building Locally
 
 ```bash
