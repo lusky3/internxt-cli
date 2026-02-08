@@ -69,14 +69,3 @@ jobs:
             Branch: `${{ github.event.workflow_run.head_branch }}`
             [View Run](${{ github.event.workflow_run.html_url }})
           color: 0xff0000
-
-      - name: New Version Build Notification
-        if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.name == 'Check for new internxt-cli release and build Docker image'
-        uses: sarisia/actions-status-discord@v1
-        with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          title: "✅ New Internxt CLI Version Built"
-          description: |
-            Successfully built and published new Docker image
-            [View Run](${{ github.event.workflow_run.html_url }})
-          color: 0x00ff00
