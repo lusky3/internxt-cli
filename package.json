@@ -1,0 +1,9 @@
+{
+  "name": "internxt-cli-docker",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@internxt/cli": "1.6.2",
+    "otpauth": "9.5.0"
+  }
+}

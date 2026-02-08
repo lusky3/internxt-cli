@@ -5,3 +5,6 @@ README.md
 .vscode
 .last_release
 *.md
+package.json
+package-lock.json
+node_modules
