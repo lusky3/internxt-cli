@@ -106,7 +106,7 @@ jobs:
 
       - name: Run Trivy vulnerability scanner
         if: env.new_release == 'true'
-        uses: aquasecurity/trivy-action@0.30.0
+        uses: aquasecurity/trivy-action@0.34.0
         with:
           image-ref: ghcr.io/${{ github.repository }}/internxt-cli:${{ env.latest_release }}
           format: 'sarif'
