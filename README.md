@@ -34,7 +34,7 @@ docker run -d \
 ## Environment Variables
 
 | Variable | Required | Description |
-|----------|----------|-------------|
+| ---------- | ---------- | ------------- |
 | `INTERNXT_EMAIL` | Yes | Your Internxt account email |
 | `INTERNXT_PASSWORD` | Yes | Your Internxt account password |
 | `INTERNXT_TOTP` | No | TOTP secret for 2FA (if enabled) |
@@ -84,12 +84,14 @@ secrets:
 Once running, you can mount the WebDAV server:
 
 **Linux/macOS:**
+
 ```bash
 mount -t davfs http://localhost:3005 /mnt/internxt
 ```
 
 **Windows:**
-```
+
+```text
 Map Network Drive → http://localhost:3005
 ```
 
@@ -103,6 +105,7 @@ Map Network Drive → http://localhost:3005
 ## Automatic Updates
 
 This repository includes a GitHub Actions workflow that:
+
 - Checks hourly for new Internxt CLI releases
 - Automatically builds and publishes updated Docker images
 - Tags images with both version number and `latest`
@@ -120,4 +123,3 @@ docker build -t internxt-cli .
 MIT License - see [LICENSE](LICENSE) file for details.
 
 Internxt CLI is subject to its own license terms.
-
