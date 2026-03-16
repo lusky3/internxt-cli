@@ -14,9 +14,9 @@ RUN apk add --update --no-cache \
     adduser -D -u 1000 -G internxt internxt && \
     npm install -g @internxt/cli@1.6.3 otpauth@9.5.0 && \
     cd /usr/local/lib/node_modules/@internxt/cli && \
-    npm install axios@1.13.6 fast-xml-parser@5.5.5 undici@6.23.0 --save && \
+    npm install --ignore-scripts axios@1.13.6 fast-xml-parser@5.5.5 undici@6.23.0 --save && \
     cd /usr/local/lib/node_modules/@internxt/cli/node_modules/@internxt/inxt-js && \
-    npm install axios@1.13.6 --save
+    npm install --ignore-scripts axios@1.13.6 --save
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh && \
