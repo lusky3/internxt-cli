@@ -6,6 +6,7 @@ RUN apk add --update --no-cache \
     bash \
     ca-certificates \
     curl \
+    git \
     nodejs \
     npm \
     openssl && \
@@ -16,7 +17,8 @@ RUN apk add --update --no-cache \
     cd /usr/local/lib/node_modules/@internxt/cli && \
     npm install --ignore-scripts axios@1.13.6 fast-xml-parser@5.5.5 undici@6.23.0 --save && \
     cd /usr/local/lib/node_modules/@internxt/cli/node_modules/@internxt/inxt-js && \
-    npm install --ignore-scripts axios@1.13.6 --save
+    npm install --ignore-scripts axios@1.13.6 --save && \
+    apk del git
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh && \
