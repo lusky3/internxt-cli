@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Force rebuild even if no new release'
+        required: false
+        default: 'false'
+        type: boolean
 
 permissions:
   contents: write
@@ -60,6 +66,9 @@ jobs:
             git add .last_release
             git commit -m "Update latest release to $latest_release"
             git push
+          elif [ "${{ inputs.force_rebuild }}" == "true" ]; then
+            echo "Force rebuild requested."
+            echo "new_release=true" >> $GITHUB_ENV
           else
             echo "No new release found."
             echo "new_release=false" >> $GITHUB_ENV
