@@ -72,7 +72,10 @@ jobs:
           color: 0xff0000
 
       - name: Workflow Success Notification
-        if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'
+        if: >-
+          github.event_name == 'workflow_run'
+          && github.event.workflow_run.conclusion == 'success'
+          && github.event.workflow_run.name != 'Check for new internxt-cli release and build Docker image'
         uses: sarisia/actions-status-discord@v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}

@@ -126,3 +126,15 @@ jobs:
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: 'trivy-results.sarif'
+
+      - name: Discord notification for new release
+        if: env.new_release == 'true'
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: Success
+          title: "✅ New internxt-cli release detected: ${{ env.latest_release }}"
+          description: |
+            Docker image built and pushed successfully.
+            [View Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          color: 0x00ff00
