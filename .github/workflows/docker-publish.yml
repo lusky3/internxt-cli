@@ -26,14 +26,17 @@ jobs:
 
       - name: Check and save latest release
         id: check_save_release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          latest_release=$(curl -s https://api.github.com/repos/internxt/cli/releases/latest | jq -r .tag_name)
-          
           max_retries=5
           retry_count=0
+          latest_release=""
 
           while [[ $retry_count -lt $max_retries ]]; do
-              latest_release=$(curl -s https://api.github.com/repos/internxt/cli/releases/latest | jq -r .tag_name)
+              response=$(curl -sf -H "Authorization: Bearer $GH_TOKEN" \
+                https://api.github.com/repos/internxt/cli/releases/latest 2>/dev/null) || true
+              latest_release=$(echo "$response" | jq -r .tag_name 2>/dev/null) || true
 
               if [[ -z "$latest_release" || "$latest_release" == "null" ]]; then
                   echo "Version lookup failed. Retrying in 30 seconds... (Attempt $((retry_count + 1)) of $max_retries)"
