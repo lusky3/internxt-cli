@@ -7,7 +7,6 @@ WORKDIR /app
 RUN apk add --update --no-cache \
     bash \
     ca-certificates \
-    curl \
     git \
     nodejs \
     npm \
@@ -33,6 +32,6 @@ USER internxt
 EXPOSE 3005
 
 HEALTHCHECK --interval=60s --timeout=10s --start-period=30s --retries=3 \
-    CMD curl -sf http://localhost:3005/ > /dev/null || exit 1
+    CMD node -e "const http = require('http'); const req = http.get('http://localhost:3005/', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.setTimeout(5000, () => { req.destroy(); process.exit(1); });"
 
 ENTRYPOINT ["/entrypoint.sh"]
