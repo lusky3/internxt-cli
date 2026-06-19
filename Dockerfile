@@ -1,5 +1,7 @@
 FROM alpine:3.24
 
+ARG CLI_VERSION=1.6.3
+
 WORKDIR /app
 
 RUN apk add --update --no-cache \
@@ -13,11 +15,13 @@ RUN apk add --update --no-cache \
     apk upgrade --no-cache && \
     addgroup -g 1000 internxt && \
     adduser -D -u 1000 -G internxt internxt && \
-    npm install -g @internxt/cli@1.6.3 otpauth@9.5.0 && \
+    npm install -g @internxt/cli@${CLI_VERSION#v} otpauth@9.5.0 && \
+    # CVE mitigations: override vulnerable transitive dependencies until fixed upstream
     cd /usr/local/lib/node_modules/@internxt/cli && \
     npm install --ignore-scripts axios@1.13.6 fast-xml-parser@5.5.5 undici@7.24.4 --save && \
     cd /usr/local/lib/node_modules/@internxt/cli/node_modules/@internxt/inxt-js && \
     npm install --ignore-scripts axios@1.13.6 undici@7.24.4 --save && \
+    npm cache clean --force && \
     apk del git
 
 COPY entrypoint.sh /entrypoint.sh
