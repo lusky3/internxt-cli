@@ -4,6 +4,6 @@
   "private": true,
   "dependencies": {
     "@internxt/cli": "1.6.10",
-    "otpauth": "9.5.2"
+    "otpauth": "9.6.0"
   }
 }
